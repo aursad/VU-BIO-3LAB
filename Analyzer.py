@@ -59,8 +59,8 @@ class Analyzer:
         fileForMerge.close()
 
 def main():
-    dangerious = [18] #[16, 18, 31, 33, 35, 51, 52]
-    notDangerious =  [11] #[6, 11, 40, 42, 43, 44, 57, 81]
+    dangerious = [16, 18, 31, 33, 35, 51, 52]
+    notDangerious =  [6, 11, 40, 42, 43, 44, 57, 81]
     mafftOutputFile = "mafft_output.fasta"
     mafftTempFile = "mafft_temp.fasta"
     fileNameForSequences = "blast_type_"
@@ -73,7 +73,7 @@ def main():
 
             for virus in dangerious + notDangerious:
                 #Generating blast search query
-                enterezQuery = '"type %s"[ALL] AND "HPV"[ALL]' % virus
+                enterezQuery = '"papillomavirus"[Organism] AND ( *"type %s"[title] AND *human*[title])' % virus
 
                 #Creating full path to save blast result
                 completeNameBlast = os.path.abspath("blast/{0}{1}.fa".format(fileNameForSequences, virus.__str__()))
