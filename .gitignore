@@ -7,6 +7,8 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+blast/
+cdhit/
 env/
 build/
 develop-eggs/
