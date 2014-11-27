@@ -59,8 +59,8 @@ class Analyzer:
         fileForMerge.close()
 
 def main():
-    dangerious = [16, 18] #[16, 18, 31, 33, 35, 51, 52]
-    notDangerious =  [6, 11] #[6, 11, 40, 42, 43, 44, 57, 81]
+    dangerious = [18] #[16, 18, 31, 33, 35, 51, 52]
+    notDangerious =  [11] #[6, 11, 40, 42, 43, 44, 57, 81]
     mafftOutputFile = "mafft_output.fasta"
     mafftTempFile = "mafft_temp.fasta"
     fileNameForSequences = "blast_type_"
@@ -71,22 +71,34 @@ def main():
             seqAn = Analyzer("blastn", "nr")
             seqAn.loadMainSeq("human_papillomavirus_HPV16.fasta")
 
-            for numberOfVirus in dangerious + notDangerious:
+            for virus in dangerious + notDangerious:
                 #Generating blast search query
-                enterezQuery = '"type %s"[ALL] AND "HPV"[ALL]' % numberOfVirus
+                enterezQuery = '"type %s"[ALL] AND "HPV"[ALL]' % virus
+
                 #Creating full path to save blast result
-                dataToProcess = ''.join([fileNameForSequences, numberOfVirus.__str__(), '.fa'])
-                completeName = os.path.abspath("blast/%s" % dataToProcess)
-                print(''.join(['Processing file:', completeName.__str__()]))
+                completeNameBlast = os.path.abspath("blast/{0}{1}.fa".format(fileNameForSequences, virus.__str__()))
+                print('Processing file: {0}'.format(completeNameBlast.__str__()))
 
-                if not os.path.isfile(completeName):
-                    seqAn.startBlast(enterezQuery, completeName)
+                if not os.path.isfile(completeNameBlast):
+                    seqAn.startBlast(enterezQuery, completeNameBlast)
 
-                cdHittedFileName = ''.join([fileNameForSequencesAfterCdHit, numberOfVirus.__str__(), '.fa'])
-                completeNameCdHit = os.path.abspath("cdhit/%s" % cdHittedFileName)
+                #Creating full path to save cdHit file of specific virus
+                completeNameCdHit = os.path.abspath("cdhit/{0}{1}.fa".format(fileNameForSequencesAfterCdHit, virus.__str__()))
                 if not os.path.isfile(completeNameCdHit):
-                    seqAn.startCdHit(completeName, completeNameCdHit)
+                    seqAn.startCdHit(completeNameBlast, completeNameCdHit)
+                else:
+                    seqAn.cdHittedFilesArray += [completeNameCdHit]
 
+                print('Processing file {0} end.'.format(completeNameBlast.__str__()))
+
+            # Remove joined file if exist
+            if os.path.isfile(mafftTempFile):
+                os.remove(mafftTempFile)
+            # Remove mafft output file if exist
+            if os.path.isfile(mafftOutputFile):
+                os.remove(mafftOutputFile)
+
+            # Joining all cdhit files and then starting mafft
             seqAn.joinFiles(mafftTempFile)
             seqAn.startMafft(mafftTempFile, mafftOutputFile)
     finally:
