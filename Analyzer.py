@@ -63,11 +63,20 @@ def main():
     notDangerious =  [6, 11, 40, 42, 43, 44, 57, 81]
     mafftOutputFile = "mafft_output.fasta"
     mafftTempFile = "mafft_temp.fasta"
+    blastFolder = "blast"
+    cdHitFolder = "cdhit"
     fileNameForSequences = "blast_type_"
     fileNameForSequencesAfterCdHit = 'cdhit_type_'
 
     try:
         with Timer() as timer:
+            #Check if files dir's exist if not to create
+            if not os.path.exists(blastFolder):
+                os.makedirs(blastFolder)
+            if not os.path.exists(cdHitFolder):
+                os.makedirs(cdHitFolder)
+
+            #Start Seq analyzer with constructor
             seqAn = Analyzer("blastn", "nr")
             seqAn.loadMainSeq("human_papillomavirus_HPV16.fasta")
 
@@ -76,14 +85,14 @@ def main():
                 enterezQuery = '"papillomavirus"[Organism] AND ( *"type %s"[title] AND *human*[title])' % virus
 
                 #Creating full path to save blast result
-                completeNameBlast = os.path.abspath("blast/{0}{1}.fa".format(fileNameForSequences, virus.__str__()))
+                completeNameBlast = os.path.abspath("{0}/{1}{2}.fa".format(blastFolder, fileNameForSequences, virus.__str__()))
                 print('Processing file: {0}'.format(completeNameBlast.__str__()))
 
                 if not os.path.isfile(completeNameBlast):
                     seqAn.startBlast(enterezQuery, completeNameBlast)
 
                 #Creating full path to save cdHit file of specific virus
-                completeNameCdHit = os.path.abspath("cdhit/{0}{1}.fa".format(fileNameForSequencesAfterCdHit, virus.__str__()))
+                completeNameCdHit = os.path.abspath("{0}/{1}{2}.fa".format(cdHitFolder, fileNameForSequencesAfterCdHit, virus.__str__()))
                 if not os.path.isfile(completeNameCdHit):
                     seqAn.startCdHit(completeNameBlast, completeNameCdHit)
                 else:

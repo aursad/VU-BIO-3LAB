@@ -9,6 +9,7 @@ __pycache__/
 .Python
 blast/
 cdhit/
+output/
 env/
 build/
 develop-eggs/
