@@ -1,6 +1,6 @@
 __author__ = 'Aurimas Sadauskas'
-_version__ = '1.0'
-_lastUpdate = '2014-11-27'
+_version__ = '1.8'
+_lastUpdate = '2014-12-13'
 
 import os
 
@@ -17,13 +17,10 @@ class Analyzer:
         self.program = program
         self.record = ""
         self.database = database
-        self.entrezQuery = ""
         self.cdHittedFilesArray = []
 
     def startBlast(self, entrezQuery, input="search_output.xml"):
-        entrezQuery = entrezQuery
-
-        blastRecords = self.blast()
+        blastRecords = self.blast(entrezQuery)
         fileToWrite = open(input, "w")
         arrayOfSequences = []
         for sequence in blastRecords.alignments:
@@ -36,9 +33,9 @@ class Analyzer:
 
         return blastRecords;
 
-    def blast(self):
+    def blast(self, entrezQuery):
         blastOutput = NCBIWWW.qblast(self.program, self.database, self.record.seq,
-                                     entrez_query=self.entrezQuery, hitlist_size=1000, expect=100.0)
+                                     entrez_query=entrezQuery, hitlist_size=1000, expect=100.0)
         return NCBIXML.read(blastOutput);
 
     def loadMainSeq(self, path, format="fasta"):
@@ -60,7 +57,7 @@ class Analyzer:
 
 def main():
     dangerious = [16, 18, 31, 33, 35, 51, 52]
-    notDangerious =  [6, 11, 40, 42, 43, 44, 57, 81]
+    notDangerious = [6, 11, 40, 42, 43, 44, 57, 81]
     mafftOutputFile = "mafft_output.fasta"
     mafftTempFile = "mafft_temp.fasta"
     blastFolder = "blast"
