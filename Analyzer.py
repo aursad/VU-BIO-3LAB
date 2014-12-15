@@ -1,5 +1,5 @@
 __author__ = 'Aurimas Sadauskas'
-_version__ = '1.9'
+_version__ = '1.0'
 _lastUpdate = '2014-12-15'
 
 import os

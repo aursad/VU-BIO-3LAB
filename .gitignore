@@ -7,8 +7,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-blast/
-cdhit/
 output/
 env/
 build/
